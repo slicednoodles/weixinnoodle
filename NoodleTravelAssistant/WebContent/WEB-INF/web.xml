@@ -9,6 +9,14 @@
     <servlet-name>travelTourDesc</servlet-name>
     <url-pattern>/travelTourDesc</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>hotelServlet</servlet-name>
+    <servlet-class>com.noodle.travel.assistant.servlet.HotelServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>hotelServlet</servlet-name>
+    <url-pattern>/hotelServlet</url-pattern>
+  </servlet-mapping>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
