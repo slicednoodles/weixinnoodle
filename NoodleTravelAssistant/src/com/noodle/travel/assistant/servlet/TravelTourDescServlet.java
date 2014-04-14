@@ -74,7 +74,7 @@ public class TravelTourDescServlet extends HttpServlet {
 			partContent = AllConstants.WEI_XIN_IMAGE_ITEM.replace(
 					AllConstants.NOODLE_PIC_URL,
 					es.get(i).children().attr("src")).replace(
-					AllConstants.NOODLE_IMAGE_NUMBER, "乌镇图片" + count);
+					AllConstants.NOODLE_IMAGE_NUMBER, keyword + "图片" + count);
 			html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
 					+ es.get(i).attr("href"));
 			int bigImageIdIndex = html.indexOf("\"pic_url\":\"");
@@ -85,7 +85,7 @@ public class TravelTourDescServlet extends HttpServlet {
 					AllConstants.NOODLE_IMAGE_CLICK_URL,
 					"http://hiphotos.baidu.com/lvpics/pic/item/"
 							+ part.replace("\"pic_url\":\"", "") + ".jpg");
-			if(StringUtils.isNotEmpty(partContent)){
+			if (StringUtils.isNotEmpty(partContent)) {
 				sb.append(partContent);
 			}
 			if (5 == count) {
