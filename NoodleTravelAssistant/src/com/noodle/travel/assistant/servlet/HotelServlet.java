@@ -36,20 +36,24 @@ public class HotelServlet extends HttpServlet {
 
 	private static String process(String keyword) {
 		try {
+			http://api.map.baidu.com/place/v2/search?&q=%E9%A5%AD%E5%BA%97&region=%E5%8C%97%E4%BA%AC&output=json&ak=E4805d16520de693a3fe707cdc962045
+			
+			
 			if(StringUtils.isNotEmpty(keyword)){
 				String html = HTMLUtils
-						.getHtml("http://lvyou.baidu.com/search?word="
-								+ java.net.URLEncoder.encode(keyword, "utf-8")
-								+ "&form=1");
+						.getHtml("http://api.map.baidu.com/place/v2/search?&output=xml&ak=l0wKGnh4oTlA9DyRstrMy3QG&q="
+								+ java.net.URLEncoder.encode("酒店", "utf-8")
+								+ "&region=")
+								+ java.net.URLEncoder.encode("上海", "utf-8");
 				if (StringUtils.isNotEmpty(html)) {
 					String result = doParse(html);
 
-					if (StringUtils.isEmpty(result)) {
-						PinyinUtils pu = new PinyinUtils();
-						html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
-								+ pu.getStringPinYin(keyword));
-						result = doParse(html);
-					}
+//					if (StringUtils.isEmpty(result)) {
+//						PinyinUtils pu = new PinyinUtils();
+//						html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
+//								+ pu.getStringPinYin(keyword));
+//						result = doParse(html);
+//					}
 					if (StringUtils.isNotEmpty(result)) {
 						return result;
 					}
@@ -83,6 +87,6 @@ public class HotelServlet extends HttpServlet {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(process("纳木错"));
+		System.out.println(process("东方明珠"));
 	}
 }
