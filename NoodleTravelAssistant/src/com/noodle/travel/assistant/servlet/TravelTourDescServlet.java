@@ -67,12 +67,27 @@ public class TravelTourDescServlet extends HttpServlet {
 		Document doc = Jsoup.parse(html);
 		Elements es = doc.getElementsByClass("photo-frame");
 		StringBuilder sb = new StringBuilder();
+		String partContent = "";
 		int count = 0;
 		for (int i = 0; i < es.size(); i++) {
-			sb.append(AllConstants.WEI_XIN_IMAGE_ITEM.replace(
-					AllConstants.NOODLE_PIC_URL,
-					es.get(i).children().attr("src")));
 			count++;
+			partContent = AllConstants.WEI_XIN_IMAGE_ITEM.replace(
+					AllConstants.NOODLE_PIC_URL,
+					es.get(i).children().attr("src")).replace(
+					AllConstants.NOODLE_IMAGE_NUMBER, "乌镇图片" + count);
+			html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
+					+ es.get(i).attr("href"));
+			int bigImageIdIndex = html.indexOf("\"pic_url\":\"");
+			String part = html.substring(bigImageIdIndex);
+			int bigImageIdEndIndex = part.indexOf("\",\"ext\":{");
+			part = part.substring(0, bigImageIdEndIndex);
+			partContent = partContent.replace(
+					AllConstants.NOODLE_IMAGE_CLICK_URL,
+					"http://hiphotos.baidu.com/lvpics/pic/item/"
+							+ part.replace("\"pic_url\":\"", "") + ".jpg");
+			if(StringUtils.isNotEmpty(partContent)){
+				sb.append(partContent);
+			}
 			if (5 == count) {
 				break;
 			}
