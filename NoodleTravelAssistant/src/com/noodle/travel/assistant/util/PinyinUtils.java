@@ -6,18 +6,12 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
 public class PinyinUtils {
-	private HanyuPinyinOutputFormat format = null;
-	private String[] pinyin;
-
-	public PinyinUtils() {
-		format = new HanyuPinyinOutputFormat();
-		format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
-		pinyin = null;
-	}
+	private static HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
+	private static String[] pinyin;
 
 	// 转换单个字符
 
-	public String getCharacterPinYin(char c) {
+	public static String getCharacterPinYin(char c) {
 		try {
 			pinyin = PinyinHelper.toHanyuPinyinStringArray(c, format);
 		} catch (BadHanyuPinyinOutputFormatCombination e) {
@@ -39,7 +33,9 @@ public class PinyinUtils {
 
 	// 转换一个字符串
 
-	public String getStringPinYin(String str) {
+	public static String getStringPinYin(String str) {
+		format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+		pinyin = null;
 		StringBuilder sb = new StringBuilder();
 		String tempPinyin = null;
 		for (int i = 0; i < str.length(); ++i) {

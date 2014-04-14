@@ -1,6 +1,7 @@
 package com.noodle.travel.assistant.servlet;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +13,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import com.noodle.travel.assistant.util.AllConstants;
 import com.noodle.travel.assistant.util.HTMLUtils;
 import com.noodle.travel.assistant.util.PinyinUtils;
 
@@ -25,39 +27,83 @@ public class TravelTourDescServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String keyword = req.getParameter("query");
-		System.out.println("input keyword = " + keyword);
-		resp.setContentType("text/plain");
-		resp.setCharacterEncoding("UTF-8");
-		String result = process(keyword);
-		System.out.println(result);
-		resp.getWriter().println(result);
-	}
-
-	private static String process(String keyword) {
 		try {
-			if(StringUtils.isNotEmpty(keyword)){
-				String html = HTMLUtils
-						.getHtml("http://lvyou.baidu.com/search?word="
-								+ java.net.URLEncoder.encode(keyword, "utf-8")
-								+ "&form=1");
-				if (StringUtils.isNotEmpty(html)) {
-					String result = doParse(html);
-
-					if (StringUtils.isEmpty(result)) {
-						PinyinUtils pu = new PinyinUtils();
-						html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
-								+ pu.getStringPinYin(keyword));
-						result = doParse(html);
-					}
-					if (StringUtils.isNotEmpty(result)) {
-						return result;
-					}
+			String keyword = req.getParameter("query");
+			String type = req.getParameter("type");
+			System.out.println("input keyword = " + keyword);
+			System.out.println("input keyword = " + type);
+			String result = "";
+			if (StringUtils.isNotEmpty(keyword) && StringUtils.isNotEmpty(type)) {
+				if ("desc".equalsIgnoreCase(type)) {
+					result = getDesc(keyword);
+				} else if ("image".equalsIgnoreCase(type)) {
+					result = getImageUrl(keyword);
+				} else if ("strategy".equalsIgnoreCase(type)) {
+					// result = getStrategy(keyword);
 				}
 			}
-			return "很遗憾，没能找到大家对该景点的印象";
+			resp.setContentType("text/plain");
+			resp.setCharacterEncoding("UTF-8");
+			System.out.println(result);
+			resp.getWriter().println(result);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	private String getStrategy(String keyword) throws Exception {
+		// 获得交通信息
+		String html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
+				+ PinyinUtils.getStringPinYin(keyword) + "/jiaotong/");
+		Document doc = Jsoup.parse(html);
+		Elements es = doc.getElementsByClass("photo-frame");
+		return null;
+	}
+
+	private static String getImageUrl(String keyword)
+			throws UnsupportedEncodingException, Exception {
+		String html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
+				+ PinyinUtils.getStringPinYin(keyword) + "/fengjing/");
+		Document doc = Jsoup.parse(html);
+		Elements es = doc.getElementsByClass("photo-frame");
+		StringBuilder sb = new StringBuilder();
+		int count = 0;
+		for (int i = 0; i < es.size(); i++) {
+			sb.append(AllConstants.WEI_XIN_IMAGE_ITEM.replace(
+					AllConstants.NOODLE_PIC_URL,
+					es.get(i).children().attr("src")));
+			count++;
+			if (5 == count) {
+				break;
+			}
+		}
+		if (StringUtils.isNotEmpty(sb.toString())) {
+			return AllConstants.WEI_XIN_ARTICLES_MESSAGE_START.replace(
+					AllConstants.NOODLE_ARTICLE_COUNT, String.valueOf(count))
+					+ sb.toString() + AllConstants.WEI_XIN_ARTICLES_MESSAGE_END;
+		}
+		return "没找到该景点的图库";
+	}
+
+	private static String getDesc(String keyword)
+			throws UnsupportedEncodingException, Exception {
+		if (StringUtils.isNotEmpty(keyword)) {
+			String html = HTMLUtils
+					.getHtml("http://lvyou.baidu.com/search?word="
+							+ java.net.URLEncoder.encode(keyword, "utf-8")
+							+ "&form=1");
+			if (StringUtils.isNotEmpty(html)) {
+				String result = doParse(html);
+
+				if (StringUtils.isEmpty(result)) {
+					html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
+							+ PinyinUtils.getStringPinYin(keyword));
+					result = doParse(html);
+				}
+				if (StringUtils.isNotEmpty(result)) {
+					return result;
+				}
+			}
 		}
 		return "很遗憾，没能找到大家对该景点的印象";
 	}
@@ -82,7 +128,8 @@ public class TravelTourDescServlet extends HttpServlet {
 		return sb.toString();
 	}
 
-	public static void main(String[] args) {
-		System.out.println(process("纳木错"));
+	public static void main(String[] args) throws UnsupportedEncodingException,
+			Exception {
+		System.out.println(getImageUrl("乌镇"));
 	}
 }
