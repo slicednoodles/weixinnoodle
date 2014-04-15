@@ -30,6 +30,18 @@
     <servlet-name>hotelServlet</servlet-name>
     <url-pattern>/hotelServlet</url-pattern>
   </servlet-mapping>
+  
+  <!-- 盗取链接 -->
+  <servlet>
+    <servlet-name>getLinkSrc</servlet-name>
+    <servlet-class>com.noodle.travel.assistant.servlet.GetLinkSrcServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>getLinkSrc</servlet-name>
+    <url-pattern>/link</url-pattern>
+  </servlet-mapping>
+  
+  
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>

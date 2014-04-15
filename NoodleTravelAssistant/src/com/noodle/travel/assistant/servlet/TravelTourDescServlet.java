@@ -39,10 +39,12 @@ public class TravelTourDescServlet extends HttpServlet {
 				keyword = keyword.replace(" ", "");
 				if ("desc".equalsIgnoreCase(type)) {
 					result = getDesc(keyword);
-				} else if ("image".equalsIgnoreCase(type)) {
-					result = getImageUrl(keyword);
-				} else if ("strategy".equalsIgnoreCase(type)) {
-					result = getStrategy(keyword);
+				} else if ("impress".equalsIgnoreCase(type)) {
+					result = getImpress(keyword);
+				} else if ("live".equalsIgnoreCase(type)) {
+					result = getLive(keyword);
+				} else if ("tips".equalsIgnoreCase(type)) {
+					result = getTips(keyword);
 				}
 			}
 			resp.setContentType("text/plain");
@@ -54,56 +56,84 @@ public class TravelTourDescServlet extends HttpServlet {
 		}
 	}
 
-	private static String getStrategy(String keyword) throws Exception {
+	private static String getTips(String keyword) throws Exception {
 		String html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
 				+ PinyinUtils.getStringPinYin(keyword));
 		if (!html.contains("error-back")) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(AllConstants.WEI_XIN_IMAGE_ITEM
-					.replace(AllConstants.NOODLE_PIC_URL,
-							"http://rs.v5kf.com/upload/55797/13974977644.gif")
-					.replace(AllConstants.NOODLE_IMAGE_TITLE, keyword + "活动信息")
-					.replace(
-							AllConstants.NOODLE_IMAGE_CLICK_URL,
-							"http://lvyou.baidu.com/"
-									+ PinyinUtils.getStringPinYin(keyword)
-									+ "/huodong"));
-			sb.append(AllConstants.WEI_XIN_IMAGE_ITEM
-					.replace(AllConstants.NOODLE_PIC_URL,
-							"http://rs.v5kf.com/upload/55797/13974978402.gif")
-					.replace(AllConstants.NOODLE_IMAGE_TITLE, keyword + "交通信息")
-					.replace(
-							AllConstants.NOODLE_IMAGE_CLICK_URL,
-							"http://lvyou.baidu.com/"
-									+ PinyinUtils.getStringPinYin(keyword)
-									+ "/jiaotong"));
-			sb.append(AllConstants.WEI_XIN_IMAGE_ITEM
-					.replace(AllConstants.NOODLE_PIC_URL,
-							"http://rs.v5kf.com/upload/55797/13974978736.gif")
-					.replace(AllConstants.NOODLE_IMAGE_TITLE, keyword + "住宿信息")
-					.replace(
-							AllConstants.NOODLE_IMAGE_CLICK_URL,
-							"http://lvyou.baidu.com/"
-									+ PinyinUtils.getStringPinYin(keyword)
-									+ "/zhusu"));
-			sb.append(AllConstants.WEI_XIN_IMAGE_ITEM
-					.replace(AllConstants.NOODLE_PIC_URL,
-							"http://rs.v5kf.com/upload/55797/139749785910.gif")
-					.replace(AllConstants.NOODLE_IMAGE_TITLE, keyword + "美食信息")
-					.replace(
-							AllConstants.NOODLE_IMAGE_CLICK_URL,
-							"http://lvyou.baidu.com/"
-									+ PinyinUtils.getStringPinYin(keyword)
-									+ "/meishi"));
-			sb.append(AllConstants.WEI_XIN_IMAGE_ITEM
-					.replace(AllConstants.NOODLE_PIC_URL,
-							"http://rs.v5kf.com/upload/55797/13974978889.gif")
-					.replace(AllConstants.NOODLE_IMAGE_TITLE, keyword + "购物信息")
-					.replace(
-							AllConstants.NOODLE_IMAGE_CLICK_URL,
-							"http://lvyou.baidu.com/"
-									+ PinyinUtils.getStringPinYin(keyword)
-									+ "/gouwu"));
+
+			sb.append(getItem(
+					"http://rs.v5kf.com/upload/55797/13975812481.jpg",
+					keyword + "活动信息",
+					"http://lvyou.baidu.com/"
+							+ PinyinUtils.getStringPinYin(keyword) + "/huodong"));
+			
+			sb.append(getItem(
+					"http://rs.v5kf.com/upload/55797/13975812883.jpg",
+					keyword + "地图信息",
+					"http://lvyou.baidu.com/"
+							+ PinyinUtils.getStringPinYin(keyword) + "/ditu"));
+			
+			sb.append(getItem(
+					"http://rs.v5kf.com/upload/55797/13975812767.jpg",
+					keyword + "文化信息",
+					"http://lvyou.baidu.com/"
+							+ PinyinUtils.getStringPinYin(keyword) + "/wenhua"));
+			
+			sb.append(getItem(
+					"http://rs.v5kf.com/upload/55797/13975812982.jpg",
+					keyword + "贴士信息",
+					"http://lvyou.baidu.com/"
+							+ PinyinUtils.getStringPinYin(keyword) + "/tips"));
+			
+			
+			if (StringUtils.isNotEmpty(sb.toString())) {
+				return AllConstants.WEI_XIN_ARTICLES_MESSAGE_START.replace(
+						AllConstants.NOODLE_ARTICLE_COUNT, String.valueOf(5))
+						+ sb.toString()
+						+ AllConstants.WEI_XIN_ARTICLES_MESSAGE_END;
+			}
+		}
+		return AllConstants.WEI_XIN_ARTICLES_MESSAGE_START.replace(
+				AllConstants.NOODLE_ARTICLE_COUNT, String.valueOf(1))
+				+ AllConstants.WEI_XIN_IMAGE_ITEM
+						.replace(AllConstants.NOODLE_PIC_URL, "")
+						.replace(AllConstants.NOODLE_IMAGE_TITLE,
+								"抱歉，亲，没找到该景点。试试别的景点可以吗")
+						.replace(AllConstants.NOODLE_IMAGE_CLICK_URL, "")
+				+ AllConstants.WEI_XIN_ARTICLES_MESSAGE_END;
+	}
+	
+	private static String getLive(String keyword) throws Exception {
+		String html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
+				+ PinyinUtils.getStringPinYin(keyword));
+		if (!html.contains("error-back")) {
+			StringBuilder sb = new StringBuilder();
+
+			sb.append(getItem(
+					"http://rs.v5kf.com/upload/55797/13975813565.jpg",
+					keyword + "路线信息",
+					"http://lvyou.baidu.com/"
+							+ PinyinUtils.getStringPinYin(keyword) + "/luxian"));
+			
+			sb.append(getItem(
+					"http://rs.v5kf.com/upload/55797/13975812632.jpg",
+					keyword + "住宿信息",
+					"http://lvyou.baidu.com/"
+							+ PinyinUtils.getStringPinYin(keyword) + "/zhusu"));
+			
+			sb.append(getItem(
+					"http://rs.v5kf.com/upload/55797/13975813126.jpg",
+					keyword + "美食信息",
+					"http://lvyou.baidu.com/"
+							+ PinyinUtils.getStringPinYin(keyword) + "/meishi"));
+			
+			sb.append(getItem(
+					"http://rs.v5kf.com/upload/55797/139758140110.jpg",
+					keyword + "购物信息",
+					"http://lvyou.baidu.com/"
+							+ PinyinUtils.getStringPinYin(keyword) + "/gouwu"));
+			
 			if (StringUtils.isNotEmpty(sb.toString())) {
 				return AllConstants.WEI_XIN_ARTICLES_MESSAGE_START.replace(
 						AllConstants.NOODLE_ARTICLE_COUNT, String.valueOf(5))
@@ -121,7 +151,14 @@ public class TravelTourDescServlet extends HttpServlet {
 				+ AllConstants.WEI_XIN_ARTICLES_MESSAGE_END;
 	}
 
-	private static String getImageUrl(String keyword)
+	private static String getItem(String picUrl, String title, String clickUrl) {
+		return AllConstants.WEI_XIN_IMAGE_ITEM
+				.replace(AllConstants.NOODLE_PIC_URL, picUrl)
+				.replace(AllConstants.NOODLE_IMAGE_TITLE, title)
+				.replace(AllConstants.NOODLE_IMAGE_CLICK_URL, clickUrl);
+	}
+
+	private static String getImpress(String keyword)
 			throws UnsupportedEncodingException, Exception {
 		String html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
 				+ PinyinUtils.getStringPinYin(keyword) + "/jingdian/");
@@ -250,8 +287,8 @@ public class TravelTourDescServlet extends HttpServlet {
 	public static void main(String[] args) throws UnsupportedEncodingException,
 			Exception {
 		Date d = new Date();
-		System.out.println(getImageUrl("横店"));
-		System.out.println(getImageUrl("横店").getBytes().length);
+		System.out.println(getImpress("横店"));
+		System.out.println(getImpress("横店").getBytes().length);
 		System.out.println(new Date().getTime() - d.getTime());
 	}
 }

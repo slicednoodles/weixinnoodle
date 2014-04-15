@@ -39,17 +39,7 @@ public class TravelNoteServlet extends HttpServlet {
 			System.out.println("input keyword = " + keyword);
 			System.out.println("input index = " + index);
 			String result = "";
-			// if (StringUtils.isNotEmpty(keyword)
-			// && StringUtils.isNotEmpty(index)) {
-			// int i = Integer.valueOf(index);
-			// if (i <= 10 && i > 0) {
-			// result = getContentPic(keyword, i);
-			// } else {
-			// result = "没有该编号哦";
-			// }
-			// } else {
 			result = process(keyword);
-			// }
 			System.out.println(result);
 			resp.setContentType("text/plain");
 			resp.setCharacterEncoding("UTF-8");
