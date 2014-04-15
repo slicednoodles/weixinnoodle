@@ -36,6 +36,7 @@ public class TravelTourDescServlet extends HttpServlet {
 			System.out.println("input keyword = " + type);
 			String result = "";
 			if (StringUtils.isNotEmpty(keyword) && StringUtils.isNotEmpty(type)) {
+				keyword = keyword.replace(" ", "");
 				if ("desc".equalsIgnoreCase(type)) {
 					result = getDesc(keyword);
 				} else if ("image".equalsIgnoreCase(type)) {
@@ -166,8 +167,8 @@ public class TravelTourDescServlet extends HttpServlet {
 				desc = title + " " + desc;
 			}
 
-			if (StringUtils.isNotEmpty(desc) && desc.length() > 30) {
-				desc = desc.substring(0, 27) + "...";
+			if (StringUtils.isNotEmpty(desc) && desc.length() > 28) {
+				desc = desc.substring(0, 25) + "...";
 			}
 			partContent = AllConstants.WEI_XIN_IMAGE_ITEM.replace(
 					AllConstants.NOODLE_PIC_URL, src).replace(
@@ -249,7 +250,8 @@ public class TravelTourDescServlet extends HttpServlet {
 	public static void main(String[] args) throws UnsupportedEncodingException,
 			Exception {
 		Date d = new Date();
-		System.out.println(getStrategy("北京"));
+		System.out.println(getImageUrl("横店"));
+		System.out.println(getImageUrl("横店").getBytes().length);
 		System.out.println(new Date().getTime() - d.getTime());
 	}
 }
