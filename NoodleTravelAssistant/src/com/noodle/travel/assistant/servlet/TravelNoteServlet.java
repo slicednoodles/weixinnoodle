@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -38,17 +39,17 @@ public class TravelNoteServlet extends HttpServlet {
 			System.out.println("input keyword = " + keyword);
 			System.out.println("input index = " + index);
 			String result = "";
-//			if (StringUtils.isNotEmpty(keyword)
-//					&& StringUtils.isNotEmpty(index)) {
-//				int i = Integer.valueOf(index);
-//				if (i <= 10 && i > 0) {
-//					result = getContentPic(keyword, i);
-//				} else {
-//					result = "没有该编号哦";
-//				}
-//			} else {
-				result = process(keyword);
-//			}
+			// if (StringUtils.isNotEmpty(keyword)
+			// && StringUtils.isNotEmpty(index)) {
+			// int i = Integer.valueOf(index);
+			// if (i <= 10 && i > 0) {
+			// result = getContentPic(keyword, i);
+			// } else {
+			// result = "没有该编号哦";
+			// }
+			// } else {
+			result = process(keyword);
+			// }
 			System.out.println(result);
 			resp.setContentType("text/plain");
 			resp.setCharacterEncoding("UTF-8");
@@ -92,11 +93,9 @@ public class TravelNoteServlet extends HttpServlet {
 		StringBuilder sb = new StringBuilder();
 		Document doc = Jsoup.parse(html);
 		Elements divs = doc.select("dl");
-		int j = 0;
 		for (int i = 0; i < divs.size(); i++) {
 			if (divs.get(i).hasAttr("data-ct")) {
-				j++;
-				sb.append(j
+				sb.append((i + 1)
 						+ ": "
 						+ divs.get(i).getElementsByTag("dt").get(0)
 								.getElementsByTag("a").text() + "\r\n");
@@ -181,8 +180,8 @@ public class TravelNoteServlet extends HttpServlet {
 
 	public static void main(String[] args) throws UnsupportedEncodingException,
 			Exception {
-		File f = new File("c:/1397406213050.png");
-		System.out.println(f.length());
-		System.out.println(getContentPic("乌镇", 1));
+		Date d = new Date();
+		System.out.println(process("北京"));
+		System.out.println(new Date().getTime() - d.getTime());
 	}
 }

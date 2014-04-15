@@ -2,6 +2,7 @@ package com.noodle.travel.assistant.servlet;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +16,7 @@ import org.jsoup.select.Elements;
 
 import com.noodle.travel.assistant.util.AllConstants;
 import com.noodle.travel.assistant.util.HTMLUtils;
+import com.noodle.travel.assistant.util.NoodleStringUtils;
 import com.noodle.travel.assistant.util.PinyinUtils;
 
 public class TravelTourDescServlet extends HttpServlet {
@@ -39,7 +41,7 @@ public class TravelTourDescServlet extends HttpServlet {
 				} else if ("image".equalsIgnoreCase(type)) {
 					result = getImageUrl(keyword);
 				} else if ("strategy".equalsIgnoreCase(type)) {
-					// result = getStrategy(keyword);
+					result = getStrategy(keyword);
 				}
 			}
 			resp.setContentType("text/plain");
@@ -51,53 +53,154 @@ public class TravelTourDescServlet extends HttpServlet {
 		}
 	}
 
-	private String getStrategy(String keyword) throws Exception {
-		// 获得交通信息
+	private static String getStrategy(String keyword) throws Exception {
 		String html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
-				+ PinyinUtils.getStringPinYin(keyword) + "/jiaotong/");
-		Document doc = Jsoup.parse(html);
-		Elements es = doc.getElementsByClass("photo-frame");
-		return null;
+				+ PinyinUtils.getStringPinYin(keyword));
+		if (!html.contains("error-back")) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(AllConstants.WEI_XIN_IMAGE_ITEM
+					.replace(AllConstants.NOODLE_PIC_URL,
+							"http://rs.v5kf.com/upload/55797/13974977644.gif")
+					.replace(AllConstants.NOODLE_IMAGE_TITLE, keyword + "活动信息")
+					.replace(
+							AllConstants.NOODLE_IMAGE_CLICK_URL,
+							"http://lvyou.baidu.com/"
+									+ PinyinUtils.getStringPinYin(keyword)
+									+ "/huodong"));
+			sb.append(AllConstants.WEI_XIN_IMAGE_ITEM
+					.replace(AllConstants.NOODLE_PIC_URL,
+							"http://rs.v5kf.com/upload/55797/13974978402.gif")
+					.replace(AllConstants.NOODLE_IMAGE_TITLE, keyword + "交通信息")
+					.replace(
+							AllConstants.NOODLE_IMAGE_CLICK_URL,
+							"http://lvyou.baidu.com/"
+									+ PinyinUtils.getStringPinYin(keyword)
+									+ "/jiaotong"));
+			sb.append(AllConstants.WEI_XIN_IMAGE_ITEM
+					.replace(AllConstants.NOODLE_PIC_URL,
+							"http://rs.v5kf.com/upload/55797/13974978736.gif")
+					.replace(AllConstants.NOODLE_IMAGE_TITLE, keyword + "住宿信息")
+					.replace(
+							AllConstants.NOODLE_IMAGE_CLICK_URL,
+							"http://lvyou.baidu.com/"
+									+ PinyinUtils.getStringPinYin(keyword)
+									+ "/zhusu"));
+			sb.append(AllConstants.WEI_XIN_IMAGE_ITEM
+					.replace(AllConstants.NOODLE_PIC_URL,
+							"http://rs.v5kf.com/upload/55797/139749785910.gif")
+					.replace(AllConstants.NOODLE_IMAGE_TITLE, keyword + "美食信息")
+					.replace(
+							AllConstants.NOODLE_IMAGE_CLICK_URL,
+							"http://lvyou.baidu.com/"
+									+ PinyinUtils.getStringPinYin(keyword)
+									+ "/meishi"));
+			sb.append(AllConstants.WEI_XIN_IMAGE_ITEM
+					.replace(AllConstants.NOODLE_PIC_URL,
+							"http://rs.v5kf.com/upload/55797/13974978889.gif")
+					.replace(AllConstants.NOODLE_IMAGE_TITLE, keyword + "购物信息")
+					.replace(
+							AllConstants.NOODLE_IMAGE_CLICK_URL,
+							"http://lvyou.baidu.com/"
+									+ PinyinUtils.getStringPinYin(keyword)
+									+ "/gouwu"));
+			if (StringUtils.isNotEmpty(sb.toString())) {
+				return AllConstants.WEI_XIN_ARTICLES_MESSAGE_START.replace(
+						AllConstants.NOODLE_ARTICLE_COUNT, String.valueOf(5))
+						+ sb.toString()
+						+ AllConstants.WEI_XIN_ARTICLES_MESSAGE_END;
+			}
+		}
+		return AllConstants.WEI_XIN_ARTICLES_MESSAGE_START.replace(
+				AllConstants.NOODLE_ARTICLE_COUNT, String.valueOf(1))
+				+ AllConstants.WEI_XIN_IMAGE_ITEM
+						.replace(AllConstants.NOODLE_PIC_URL, "")
+						.replace(AllConstants.NOODLE_IMAGE_TITLE,
+								"抱歉，亲，没找到该景点。试试别的景点可以吗")
+						.replace(AllConstants.NOODLE_IMAGE_CLICK_URL, "")
+				+ AllConstants.WEI_XIN_ARTICLES_MESSAGE_END;
 	}
 
 	private static String getImageUrl(String keyword)
 			throws UnsupportedEncodingException, Exception {
 		String html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
-				+ PinyinUtils.getStringPinYin(keyword) + "/fengjing/");
+				+ PinyinUtils.getStringPinYin(keyword) + "/jingdian/");
 		Document doc = Jsoup.parse(html);
-		Elements es = doc.getElementsByClass("photo-frame");
+		Elements es = doc.getElementsByClass("scene-pic-container");
+		Elements es1 = doc.getElementsByClass("scene-pic-figcaption");
+		Elements es2 = doc.getElementsByClass("scene-pic-info");
+		Elements es3 = doc.getElementsByClass("scene-pic-abstract");
 		StringBuilder sb = new StringBuilder();
 		String partContent = "";
-		int count = 0;
-		for (int i = 0; i < es.size(); i++) {
-			count++;
+		int size = 10;
+		if (size > es.size()) {
+			size = es.size();
+		}
+		for (int i = 0; i < size; i++) {
+			String src = es.get(i).child(0).attr("src");
+			if (StringUtils.isEmpty(src)) {
+				src = es.get(i).child(0).child(0).attr("src");
+			}
+			String title = es1.get(i).child(0).attr("title");
+			if (es1.get(i).childNodeSize() > 1) {
+				title = es1.get(i).child(1).attr("title");
+				if (StringUtils.isEmpty(title)) {
+					title = es1.get(i).child(1).text();
+				}
+			}
+			if (StringUtils.isEmpty(title)) {
+				title = es1.get(i).child(0).attr("title");
+			}
+			if (StringUtils.isEmpty(title)) {
+				title = es1.get(i).child(0).text();
+			}
+			String desc = "";
+			if (es2.size() > 0) {
+				desc = es2.get(i).child(0).text();
+			}
+			if (StringUtils.isEmpty(desc) && es3.size() > 0) {
+				desc = es3.get(i).text();
+			}
+			if (NoodleStringUtils.isNumeric(desc)) {
+				desc = title;
+			} else {
+				desc = title + " " + desc;
+			}
+
+			if (StringUtils.isNotEmpty(desc) && desc.length() > 30) {
+				desc = desc.substring(0, 27) + "...";
+			}
 			partContent = AllConstants.WEI_XIN_IMAGE_ITEM.replace(
-					AllConstants.NOODLE_PIC_URL,
-					es.get(i).children().attr("src")).replace(
-					AllConstants.NOODLE_IMAGE_NUMBER, keyword + "图片" + count);
-			html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
-					+ es.get(i).attr("href"));
-			int bigImageIdIndex = html.indexOf("\"pic_url\":\"");
-			String part = html.substring(bigImageIdIndex);
-			int bigImageIdEndIndex = part.indexOf("\",\"ext\":{");
-			part = part.substring(0, bigImageIdEndIndex);
+					AllConstants.NOODLE_PIC_URL, src).replace(
+					AllConstants.NOODLE_IMAGE_TITLE, desc);
+			String link = es1.get(i).child(0).attr("href");
+			if (StringUtils.isEmpty(link)) {
+				link = es1.get(i).child(1).attr("href");
+			}
+
 			partContent = partContent.replace(
 					AllConstants.NOODLE_IMAGE_CLICK_URL,
-					"http://hiphotos.baidu.com/lvpics/pic/item/"
-							+ part.replace("\"pic_url\":\"", "") + ".jpg");
+					"http://lvyou.baidu.com" + link);
 			if (StringUtils.isNotEmpty(partContent)) {
 				sb.append(partContent);
 			}
-			if (5 == count) {
+			if (i == 5) {
 				break;
 			}
 		}
 		if (StringUtils.isNotEmpty(sb.toString())) {
 			return AllConstants.WEI_XIN_ARTICLES_MESSAGE_START.replace(
-					AllConstants.NOODLE_ARTICLE_COUNT, String.valueOf(count))
+					AllConstants.NOODLE_ARTICLE_COUNT, String.valueOf(size))
 					+ sb.toString() + AllConstants.WEI_XIN_ARTICLES_MESSAGE_END;
 		}
-		return "没找到该景点的图库";
+		String result = AllConstants.WEI_XIN_ARTICLES_MESSAGE_START.replace(
+				AllConstants.NOODLE_ARTICLE_COUNT, String.valueOf(1))
+				+ AllConstants.WEI_XIN_IMAGE_ITEM
+						.replace(AllConstants.NOODLE_PIC_URL, "")
+						.replace(AllConstants.NOODLE_IMAGE_TITLE,
+								"抱歉，亲，没找到该景点。试试别的景点可以吗")
+						.replace(AllConstants.NOODLE_IMAGE_CLICK_URL, "")
+				+ AllConstants.WEI_XIN_ARTICLES_MESSAGE_END;
+		return result;
 	}
 
 	private static String getDesc(String keyword)
@@ -145,6 +248,8 @@ public class TravelTourDescServlet extends HttpServlet {
 
 	public static void main(String[] args) throws UnsupportedEncodingException,
 			Exception {
-		System.out.println(getImageUrl("乌镇"));
+		Date d = new Date();
+		System.out.println(getStrategy("北京"));
+		System.out.println(new Date().getTime() - d.getTime());
 	}
 }
