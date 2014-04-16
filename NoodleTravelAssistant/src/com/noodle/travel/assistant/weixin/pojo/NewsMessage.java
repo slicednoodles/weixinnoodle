@@ -7,18 +7,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-public class NewsMessage extends BaseMessage {
-	// 图文消息个数，限制为10条以内
-	private int ArticleCount;
+public class NewsMessage {
+	// 消息类型（text/music/news）
+	private String MsgType;
 	// 多条图文消息信息，默认第一个item为大图
 	private List<Article> Articles;
 
-	public int getArticleCount() {
-		return ArticleCount;
+	public String getMsgType() {
+		return MsgType;
 	}
 
-	public void setArticleCount(int articleCount) {
-		ArticleCount = articleCount;
+	public void setMsgType(String msgType) {
+		MsgType = msgType;
 	}
 
 	public List<Article> getArticles() {

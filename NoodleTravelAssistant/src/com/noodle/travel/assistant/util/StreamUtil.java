@@ -9,7 +9,7 @@ public class StreamUtil {
 		URL resjson = new URL(url);
 //		System.setProperty("http.proxyHost", "web-proxy.rose.hp.com");  
 //        System.setProperty("http.proxyPort", "8080");  
-		BufferedReader in = new BufferedReader(new InputStreamReader(resjson.openStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(resjson.openStream(), "UTF-8"));
 		String res;
 		StringBuilder sb = new StringBuilder("");
 		while ((res = in.readLine()) != null) {

@@ -19,11 +19,6 @@ import org.dom4j.io.SAXReader;
 
 import com.noodle.travel.assistant.weixin.pojo.Article;
 import com.noodle.travel.assistant.weixin.pojo.NewsMessage;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.core.util.QuickWriter;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
-import com.thoughtworks.xstream.io.xml.XppDriver;
 
 /**
  * Jaxb2工具类
@@ -42,37 +37,6 @@ public class JaxbUtil {
 	public static String convertToXml(Object obj) {
 		return convertToXml(obj, "UTF-8");
 	}
-
-	private static XStream xstream = new XStream(new XppDriver() {
-		public HierarchicalStreamWriter createWriter(Writer out) {
-			return new PrettyPrintWriter(out) {
-				// 对所有xml节点的转换都增加CDATA标记
-				boolean cdata = true;
-
-				@SuppressWarnings("unchecked")
-				public void startNode(String name, Class clazz) {
-					super.startNode(name, clazz);
-				}
-
-				protected void writeText(QuickWriter writer, String text) {
-					if (cdata) {
-						writer.write("<![CDATA[");
-						writer.write(text);
-						writer.write("]]>");
-					} else {
-						writer.write(text);
-					}
-				}
-			};
-		}
-	});
-	
-	public static String newsMessageToXml(NewsMessage newsMessage) {
-		xstream.alias("xml", newsMessage.getClass());
-		xstream.alias("item", new Article().getClass());
-		return xstream.toXML(newsMessage);
-	}
-	
 	/**
 	 * JavaBean转换成xml
 	 * @param obj

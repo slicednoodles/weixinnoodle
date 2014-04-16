@@ -3,6 +3,7 @@ package com.noodle.travel.assistant.util;
 public class AllConstants {
 	
 	public static final String BAIDU_PLACE_SEARCH="http://api.map.baidu.com/place/v2/search?page_size=5&output=xml&ak=l0wKGnh4oTlA9DyRstrMy3QG&q=query&region=city";
+	public static final String BAIDU_PLACE_AREA_SEARCH="http://api.map.baidu.com/place/v2/search?output=xml&radius=2000&ak=l0wKGnh4oTlA9DyRstrMy3QG&query=myquery&location=mylocation";
 	public static final String BAIDU_PLACE_DETAIL="http://api.map.baidu.com/place/v2/detail?output=xml&uid=myuid&ak=l0wKGnh4oTlA9DyRstrMy3QG";
 	
 	public static final String WEIXIN_IMAGE_MESSAGE = "<xml><MsgType>image</MsgType> <PicUrl>noodlePicUrl</PicUrl></xml>";
