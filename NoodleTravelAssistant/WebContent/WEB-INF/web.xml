@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
   <display-name>NoodleTravelAssistant</display-name>
+  <servlet>
+		<description>Init Servlet</description>
+		<servlet-name>InitServlet</servlet-name>
+		<servlet-class>com.noodle.travel.assistant.servlet.InitServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+  
   <!-- 景点印象 -->
   <servlet>
     <servlet-name>travelTourDesc</servlet-name>
@@ -11,14 +18,14 @@
     <url-pattern>/travelTourDesc</url-pattern>
   </servlet-mapping>
   
-  <!-- 游记攻略 -->
+  <!-- 内存状态 -->
   <servlet>
-    <servlet-name>travelNote</servlet-name>
-    <servlet-class>com.noodle.travel.assistant.servlet.TravelNoteServlet</servlet-class>
+    <servlet-name>status</servlet-name>
+    <servlet-class>com.noodle.travel.assistant.servlet.GetStatusServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>travelNote</servlet-name>
-    <url-pattern>/travelNote</url-pattern>
+    <servlet-name>status</servlet-name>
+    <url-pattern>/status</url-pattern>
   </servlet-mapping>
   
   <!-- 搜索酒店 -->
