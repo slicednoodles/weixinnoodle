@@ -7,8 +7,8 @@ import java.net.URL;
 public class StreamUtil {
 	public static String url2String(String url) throws Exception{
 		URL resjson = new URL(url);
-		System.setProperty("http.proxyHost", "web-proxy.rose.hp.com");  
-        System.setProperty("http.proxyPort", "8080");  
+//		System.setProperty("http.proxyHost", "web-proxy.rose.hp.com");  
+//        System.setProperty("http.proxyPort", "8080");  
 		BufferedReader in = new BufferedReader(new InputStreamReader(resjson.openStream()));
 		String res;
 		StringBuilder sb = new StringBuilder("");
