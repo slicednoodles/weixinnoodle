@@ -2,12 +2,11 @@ package com.noodle.travel.assistant.weixin.pojo;
 
 import java.util.List;
 
-/**
- * 文本消息
- * 
- * @author liufeng
- * @date 2013-05-19
- */
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 public class NewsMessage extends BaseMessage {
 	// 图文消息个数，限制为10条以内
 	private int ArticleCount;
