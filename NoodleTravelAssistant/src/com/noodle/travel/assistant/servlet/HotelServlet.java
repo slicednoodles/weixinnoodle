@@ -1,7 +1,6 @@
 package com.noodle.travel.assistant.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -13,12 +12,12 @@ import org.apache.commons.lang.StringUtils;
 
 import com.noodle.travel.assistant.baidu.pojo.PlaceSearchResults;
 import com.noodle.travel.assistant.baidu.pojo.Placesearchresponse;
+import com.noodle.travel.assistant.task.AckTask;
 import com.noodle.travel.assistant.util.AllConstants;
+import com.noodle.travel.assistant.util.CacheUtils;
 import com.noodle.travel.assistant.util.HTMLUtils;
 import com.noodle.travel.assistant.util.JaxbUtil;
 import com.noodle.travel.assistant.util.MessageUtils;
-import com.noodle.travel.assistant.weixin.pojo.Article;
-import com.noodle.travel.assistant.weixin.pojo.NewsMessage;
 
 public class HotelServlet extends HttpServlet {
 
@@ -33,59 +32,51 @@ public class HotelServlet extends HttpServlet {
 		System.out.println(city);
 		resp.setContentType("text/plain");
 		resp.setCharacterEncoding("UTF-8");
-		String result = process(city);
+		String result = CacheUtils.getResultFromCache("hotel", city);
+		if(StringUtils.isEmpty(result)) {
+			result = process(city);
+		}
 		System.out.println(result);
 		resp.getWriter().println(result);
 	}
 
 	private static String process(String city) {
+		System.setProperty("http.proxyHost", "web-proxy.rose.hp.com");  
+        System.setProperty("http.proxyPort", "8080");  
 		try {
 			StringBuilder sb = new StringBuilder();
-			sb.append(MessageUtils.getItem("http://rs.v5kf.com/upload/55797/13973886706.jpg", "上海" + "酒店信息", ""));
+			sb.append(MessageUtils.getItem("http://rs.v5kf.com/upload/55797/13973886706.jpg", city + "酒店信息", ""));
 			if (StringUtils.isNotEmpty(city)) {
+				String urlResponse = "";
 				String[] location = city.split(",");
 				if (city.contains(",") && location != null && location.length>0) {
-					String str = HTMLUtils.getHtml(AllConstants.BAIDU_PLACE_AREA_SEARCH.replace("myquery", "酒店").replace(
+					urlResponse = HTMLUtils.getHtml(AllConstants.BAIDU_PLACE_AREA_SEARCH.replace("myquery", "酒店").replace(
 							"mylocation", location[1]+","+location[0]));
-					if (StringUtils.isNotEmpty(str)) {
-						Placesearchresponse response = JaxbUtil.converyToJavaBean(str.toLowerCase(),
-								Placesearchresponse.class);
-						if (response != null && response.getResults() != null && response.getResults().size() > 0) {
-							List<PlaceSearchResults> results = response.getResults();
-							if (results != null && results.size() > 0) {
-								for (PlaceSearchResults result : results) {
-									sb.append(MessageUtils.getItem("", result.getName() + "\n" + result.getAddress()
-											+ "\n" + result.getTelephone(), ""));
-								}
-								if (StringUtils.isNotEmpty(sb.toString())) {
-									return AllConstants.WEI_XIN_ARTICLES_MESSAGE_START.replace(
-											AllConstants.NOODLE_ARTICLE_COUNT, String.valueOf(5))
-											+ sb.toString()
-											+ AllConstants.WEI_XIN_ARTICLES_MESSAGE_END;
-								}
-							}
-						}
-					}
 				} else {
-					String str = HTMLUtils.getHtml(AllConstants.BAIDU_PLACE_SEARCH.replace("query", "酒店").replace(
+					urlResponse = HTMLUtils.getHtml(AllConstants.BAIDU_PLACE_SEARCH.replace("query", "酒店").replace(
 							"city", city));
-					if (StringUtils.isNotEmpty(str)) {
-						Placesearchresponse response = JaxbUtil.converyToJavaBean(str.toLowerCase(),
-								Placesearchresponse.class);
-						
-						if (response != null && response.getResults() != null && response.getResults().size() > 0) {
-							List<PlaceSearchResults> results = response.getResults();
-							if (results != null && results.size() > 0) {
-								for (PlaceSearchResults result : results) {
-									sb.append(MessageUtils.getItem("", result.getName() + "\n" + result.getAddress()
-											+ "\n" + result.getTelephone(), ""));
+				}
+				if (StringUtils.isNotEmpty(urlResponse)) {
+					Placesearchresponse response = JaxbUtil.converyToJavaBean(urlResponse.toLowerCase(),
+							Placesearchresponse.class);
+					
+					if (response != null && response.getResults() != null && response.getResults().size() > 0) {
+						List<PlaceSearchResults> results = response.getResults();
+						if (results != null && results.size() > 0) {
+							String tel = "";
+							for (PlaceSearchResults result : results) {
+								if (StringUtils.isNotEmpty(result.getTelephone())) {
+									tel = "\n"+result.getTelephone();
 								}
-								if (StringUtils.isNotEmpty(sb.toString())) {
-									return AllConstants.WEI_XIN_ARTICLES_MESSAGE_START.replace(
-											AllConstants.NOODLE_ARTICLE_COUNT, String.valueOf(5))
-											+ sb.toString()
-											+ AllConstants.WEI_XIN_ARTICLES_MESSAGE_END;
-								}
+								sb.append(MessageUtils.getItem("", result.getName() + "\n" + result.getAddress() + tel, ""));
+							}
+							if (StringUtils.isNotEmpty(sb.toString())) {
+								String result = AllConstants.WEI_XIN_ARTICLES_MESSAGE_START.replace(
+										AllConstants.NOODLE_ARTICLE_COUNT, String.valueOf(5))
+										+ sb.toString()
+										+ AllConstants.WEI_XIN_ARTICLES_MESSAGE_END;
+								AckTask.saveRecord("hotel", city, result);
+								return result;
 							}
 						}
 					}
@@ -102,9 +93,7 @@ public class HotelServlet extends HttpServlet {
 	}
 
 	public static void main(String[] args) {
-		long start = System.currentTimeMillis();
-		process("上海");
-		long end = System.currentTimeMillis();
-		System.out.println(end-start);
+//		System.out.println(process("121.551614,31.222700"));
+		System.out.println(process("上海"));
 	}
 }
