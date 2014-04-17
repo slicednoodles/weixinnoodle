@@ -41,8 +41,8 @@ public class HotelServlet extends HttpServlet {
 	}
 
 	private static String process(String city) {
-		System.setProperty("http.proxyHost", "web-proxy.rose.hp.com");  
-        System.setProperty("http.proxyPort", "8080");  
+//		System.setProperty("http.proxyHost", "web-proxy.rose.hp.com");  
+//        System.setProperty("http.proxyPort", "8080");  
 		try {
 			StringBuilder sb = new StringBuilder();
 			sb.append(MessageUtils.getItem("http://rs.v5kf.com/upload/55797/13973886706.jpg", city + "酒店信息", ""));
