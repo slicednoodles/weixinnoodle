@@ -181,7 +181,7 @@ public class TravelTourDescServlet extends HttpServlet {
 	public static void main(String[] args) throws UnsupportedEncodingException,
 			Exception {
 		Date d = new Date();
-		System.out.println(getLive("黑龙江"));
+		System.out.println(getImpress("吕梁"));
 		// System.out.println(getImpress("东方明珠").getBytes().length);
 		System.out.println(new Date().getTime() - d.getTime());
 	}

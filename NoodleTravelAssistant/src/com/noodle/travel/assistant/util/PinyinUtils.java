@@ -3,6 +3,7 @@ package com.noodle.travel.assistant.util;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
 public class PinyinUtils {
@@ -35,6 +36,7 @@ public class PinyinUtils {
 
 	public static String getStringPinYin(String str) {
 		format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+		format.setVCharType(HanyuPinyinVCharType.WITH_V);
 		pinyin = null;
 		StringBuilder sb = new StringBuilder();
 		String tempPinyin = null;
