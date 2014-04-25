@@ -90,4 +90,5 @@ public class MessageUtils {
 				.replace(AllConstants.NOODLE_IMAGE_CLICK_URL, "")
 				+ AllConstants.WEI_XIN_ARTICLES_MESSAGE_END;
 	}
+	
 }

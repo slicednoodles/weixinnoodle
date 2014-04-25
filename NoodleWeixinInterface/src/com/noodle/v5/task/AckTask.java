@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import com.noodle.common.cache.Cache;
 import com.noodle.common.dao.DbConnection;
 import com.noodle.common.utils.HTMLUtils;
+import com.noodle.v5.service.TourService;
 
 public class AckTask {
 
@@ -44,7 +45,7 @@ public class AckTask {
 			public void run() {
 				String result = null;
 				try {
-					result = HTMLUtils.getImpressFromBD(keyword);
+					result = TourService.getImpressFromBD(keyword);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
