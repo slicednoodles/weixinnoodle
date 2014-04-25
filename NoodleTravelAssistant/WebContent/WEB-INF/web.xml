@@ -38,16 +38,15 @@
     <url-pattern>/hotelServlet</url-pattern>
   </servlet-mapping>
   
-  <!-- 盗取链接 -->
-  <servlet>
-    <servlet-name>getLinkSrc</servlet-name>
-    <servlet-class>com.noodle.travel.assistant.servlet.GetLinkSrcServlet</servlet-class>
+  <!-- 视频抓取 -->
+   <servlet>
+    <servlet-name>getVideoSrc</servlet-name>
+    <servlet-class>com.noodle.travel.assistant.servlet.VideoServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>getLinkSrc</servlet-name>
-    <url-pattern>/link</url-pattern>
+    <servlet-name>getVideoSrc</servlet-name>
+    <url-pattern>/video</url-pattern>
   </servlet-mapping>
-  
   
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
