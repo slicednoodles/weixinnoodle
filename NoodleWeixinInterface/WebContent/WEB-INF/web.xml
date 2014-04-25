@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>NoodleTravelAssistant</display-name>
+  <servlet>
+		<description>Init Servlet</description>
+		<servlet-name>InitServlet</servlet-name>
+		<servlet-class>com.noodle.common.servlet.InitServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+ 
+   <!-- 微信主入口-->
+   <servlet>
+    <servlet-name>weixin</servlet-name>
+    <servlet-class>com.noodle.weixin.servlet.CoreServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>weixin</servlet-name>
+    <url-pattern>/weixin</url-pattern>
+  </servlet-mapping>
+  
+   <!-- V5主入口-->
+   <servlet>
+    <servlet-name>v5</servlet-name>
+    <servlet-class>com.noodle.v5.servlet.CoreServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>v5</servlet-name>
+    <url-pattern>/v5</url-pattern>
+  </servlet-mapping>
+  
+   <!-- 内存状态 -->
+  <servlet>
+    <servlet-name>status</servlet-name>
+    <servlet-class>com.noodle.common.servlet.GetStatusServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>status</servlet-name>
+    <url-pattern>/status</url-pattern>
+  </servlet-mapping>
+  
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+</web-app>
