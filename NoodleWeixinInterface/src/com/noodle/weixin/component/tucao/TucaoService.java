@@ -18,7 +18,8 @@ public class TucaoService {
 		if (requestMap.get(AllConstants.MSG_TYPE).equalsIgnoreCase(
 				AllConstants.EVENT)) {
 			String event = requestMap.get(AllConstants.EVENT_KEY);
-			if (AllConstants.SUBSCRIBE.equalsIgnoreCase(event)) {
+			if (AllConstants.SUBSCRIBE.equalsIgnoreCase(requestMap
+					.get(AllConstants.EVENT))) {
 				System.out.println("access 订阅");
 				return MessageUtils
 						.getBackXMLTypeText(fromUser, user,

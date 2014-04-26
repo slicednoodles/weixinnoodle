@@ -40,7 +40,7 @@ public class AllConstants {
 
 	public static final String TO_USER_NAME = "ToUserName";
 	public static final String FROM_USER_NAME = "FromUserName";
-	public static final String EVENT = "event";
+	public static final String EVENT = "Event";
 	public static final String SUBSCRIBE = "subscribe";
 	public static final String MSG_TYPE = "MsgType";
 	public static final String JIE_CAO = "jiecao";
