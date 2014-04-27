@@ -1,5 +1,7 @@
 package com.noodle.common.utils;
 
+import org.apache.commons.lang.StringUtils;
+
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
@@ -35,6 +37,10 @@ public class PinyinUtils {
 	// 转换一个字符串
 
 	public static String getStringPinYin(String str) {
+		String duoyinziReturn = checkDuoyinzi(str);
+		if (StringUtils.isNotEmpty(duoyinziReturn)) {
+			return duoyinziReturn;
+		}
 		format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
 		format.setVCharType(HanyuPinyinVCharType.WITH_V);
 		pinyin = null;
@@ -50,5 +56,20 @@ public class PinyinUtils {
 			}
 		}
 		return sb.toString();
+	}
+
+	private static String checkDuoyinzi(String str) {
+		if ("秘鲁".equalsIgnoreCase(str)) {
+			return "bilu";
+		} else if ("东阿".equalsIgnoreCase(str)) {
+			return "donge";
+		} else if ("东莞".equalsIgnoreCase(str)) {
+			return "dongguan";
+		} else if ("会稽".equalsIgnoreCase(str)) {
+			return "kuaiji";
+		} else if ("厦门".equalsIgnoreCase(str)) {
+			return "xiamen";
+		}
+		return null;
 	}
 }
