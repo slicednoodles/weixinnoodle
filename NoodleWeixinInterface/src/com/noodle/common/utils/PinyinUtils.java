@@ -37,10 +37,10 @@ public class PinyinUtils {
 	// 转换一个字符串
 
 	public static String getStringPinYin(String str) {
-		String duoyinziReturn = checkDuoyinzi(str);
-		if (StringUtils.isNotEmpty(duoyinziReturn)) {
-			return duoyinziReturn;
-		}
+//		String duoyinziReturn = checkDuoyinzi(str);
+//		if (StringUtils.isNotEmpty(duoyinziReturn)) {
+//			return duoyinziReturn;
+//		}
 		format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
 		format.setVCharType(HanyuPinyinVCharType.WITH_V);
 		pinyin = null;
@@ -69,7 +69,21 @@ public class PinyinUtils {
 			return "kuaiji";
 		} else if ("厦门".equalsIgnoreCase(str)) {
 			return "xiamen";
+		} else if ("成都".equalsIgnoreCase(str)) {
+			return "chengdu";
+		} else if ("重庆".equalsIgnoreCase(str)) {
+			return "chongqing";
+		} else if ("都江堰".equalsIgnoreCase(str)) {
+			return "dujiangyan";
+		} else if ("长春".equalsIgnoreCase(str)) {
+			return "changchun";
+		} else if ("长春".equalsIgnoreCase(str)) {
+			return "changchun";
 		}
 		return null;
+	}
+
+	public static void main(String[] args) {
+		System.out.println(getStringPinYin("长春"));
 	}
 }

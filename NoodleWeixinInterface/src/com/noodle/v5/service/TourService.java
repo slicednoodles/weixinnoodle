@@ -10,16 +10,17 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import com.hp.hpl.sparta.Element;
 import com.noodle.common.cache.Cache;
 import com.noodle.common.utils.AllConstants;
 import com.noodle.common.utils.HTMLUtils;
 import com.noodle.common.utils.MessageUtils;
-import com.noodle.common.utils.NoodleStringUtils;
 import com.noodle.common.utils.PinyinUtils;
 import com.noodle.v5.task.AckTask;
 
 public class TourService {
+
+	private static String baiduSearchUrl = "http://lvyou.baidu.com/search?word=";
+	private static String baiduLinkUrl = "http://lvyou.baidu.com/";
 
 	public String process(HttpServletRequest req) {
 		String result = "";
@@ -33,12 +34,42 @@ public class TourService {
 			} else if (StringUtils.isNotEmpty(keyword)
 					&& StringUtils.isNotEmpty(subType)) {
 				keyword = keyword.replace(" ", "");
+				String url = "";
+				String pinyin = PinyinUtils.getStringPinYin(keyword);
+				boolean isPinyin = false;
+				if (StringUtils.isNotEmpty(pinyin)
+						&& pinyin.equalsIgnoreCase(keyword)) {
+					url = baiduLinkUrl + PinyinUtils.getStringPinYin(keyword);
+					isPinyin = true;
+				} else {
+					url = baiduSearchUrl
+							+ java.net.URLEncoder.encode(keyword, "utf-8");
+				}
+
 				if ("impress".equalsIgnoreCase(subType)) {
-					result = getImpress(keyword);
+					result = getImpress(url, keyword);
+					if (StringUtils.isEmpty(result) && !isPinyin) {
+						url = baiduLinkUrl
+								+ PinyinUtils.getStringPinYin(keyword);
+						result = getImpress(url, keyword);
+					}
 				} else if ("live".equalsIgnoreCase(subType)) {
-					result = getLive(keyword);
+					result = getLive(url, keyword);
+					if (StringUtils.isEmpty(result) && !isPinyin) {
+						url = baiduLinkUrl
+								+ PinyinUtils.getStringPinYin(keyword);
+						result = getLive(url, keyword);
+					}
 				} else if ("tips".equalsIgnoreCase(subType)) {
-					result = getTips(keyword);
+					result = getTips(url, keyword);
+					if (StringUtils.isEmpty(result) && !isPinyin) {
+						url = baiduLinkUrl
+								+ PinyinUtils.getStringPinYin(keyword);
+						result = getTips(url, keyword);
+					}
+				}
+				if (StringUtils.isEmpty(result)) {
+					result = MessageUtils.notFound("抱歉，亲，没找到该景点。试试别的景点可以吗");
 				}
 			}
 		} catch (Exception e) {
@@ -55,13 +86,12 @@ public class TourService {
 		return MessageUtils.notFound("抱歉，亲，没找到景点。试试别的功能吧");
 	}
 
-	private static String getTips(String keyword) throws Exception {
+	private static String getTips(String url, String keyword) throws Exception {
 		String result = Cache.getResultFromCache("tips", keyword);
 		if (StringUtils.isNotEmpty(result)) {
 			return result;
 		}
-		String html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
-				+ PinyinUtils.getStringPinYin(keyword));
+		String html = HTMLUtils.getHtml(url);
 		if (!html.contains("error-back")) {
 			StringBuilder sb = new StringBuilder();
 
@@ -100,13 +130,12 @@ public class TourService {
 		return MessageUtils.notFound("抱歉，亲，没找到该景点。试试别的景点可以吗");
 	}
 
-	private static String getLive(String keyword) throws Exception {
+	private static String getLive(String url, String keyword) throws Exception {
 		String result = Cache.getResultFromCache("live", keyword);
 		if (StringUtils.isNotEmpty(result)) {
 			return result;
 		}
-		String html = HTMLUtils.getHtml("http://lvyou.baidu.com/"
-				+ PinyinUtils.getStringPinYin(keyword));
+		String html = HTMLUtils.getHtml(url);
 		if (!html.contains("error-back")) {
 			StringBuilder sb = new StringBuilder();
 
@@ -142,33 +171,35 @@ public class TourService {
 				return result;
 			}
 		}
-		return MessageUtils.notFound("抱歉，亲，没找到该景点。试试别的景点可以吗");
+		return null;
 	}
 
-	private static String getImpress(String keyword)
+	private static String getImpress(String url, String keyword)
 			throws UnsupportedEncodingException, Exception {
 		String result = Cache.getResultFromCache("impress", keyword);
 		if (StringUtils.isNotEmpty(result)) {
-			AckTask.getImpressAck(keyword);
+			AckTask.getImpressAck(url, keyword);
 			return result;
 		}
-		result = getImpressFromBD(keyword);
+		result = getImpressFromBD(url, keyword);
 		if (StringUtils.isNotEmpty(result)) {
 			return result;
 		}
-		return MessageUtils.notFound("抱歉，亲，没找到该景点。试试别的景点可以吗");
+		return null;
 	}
 
-	public static String getImpressFromBD(String keyword) throws Exception {
+	public static String getImpressFromBD(String url, String keyword)
+			throws Exception {
 		String result = "";
-		String url = "http://lvyou.baidu.com/"
-				+ PinyinUtils.getStringPinYin(keyword);
 		String html = HTMLUtils.getHtml(url);
 		if (!html.contains("error-back")) {
 			Document doc = Jsoup.parse(html);
 			StringBuilder sb = new StringBuilder();
 			Elements photoes = doc.getElementsByTag("meta");
 			String mainTourImageUrl = "";
+			if (doc.getElementsByClass("titleheadname").size() == 0) {
+				return null;
+			}
 			String title = doc.getElementsByClass("titleheadname").get(0)
 					.getElementsByTag("p").text();
 			String link = "";
@@ -342,7 +373,9 @@ public class TourService {
 	public static void main(String[] args) throws UnsupportedEncodingException,
 			Exception {
 		Date d = new Date();
-		System.out.println(getImpressFromBD("杭州"));
+		System.out.println(getImpress(
+				baiduSearchUrl + java.net.URLEncoder.encode("五台山", "utf-8"),
+				"五台山"));
 		// System.out.println(getImpress("东方明珠").getBytes().length);
 		System.out.println(new Date().getTime() - d.getTime());
 	}

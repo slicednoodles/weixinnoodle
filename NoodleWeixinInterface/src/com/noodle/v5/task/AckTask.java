@@ -39,13 +39,14 @@ public class AckTask {
 		}, "saveRecord").start();
 	}
 
-	public static void getImpressAck(final String keyword) throws Exception {
+	public static void getImpressAck(final String url, final String keyword)
+			throws Exception {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				String result = null;
 				try {
-					result = TourService.getImpressFromBD(keyword);
+					result = TourService.getImpressFromBD(url, keyword);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
