@@ -197,11 +197,18 @@ public class TourService {
 			StringBuilder sb = new StringBuilder();
 			Elements photoes = doc.getElementsByTag("meta");
 			String mainTourImageUrl = "";
-			if (doc.getElementsByClass("titleheadname").size() == 0) {
+			if (doc.getElementsByClass("titleheadname").size() == 0
+					&& doc.getElementsByClass("header-container").size() == 0) {
 				return null;
 			}
-			String title = doc.getElementsByClass("titleheadname").get(0)
-					.getElementsByTag("p").text();
+			String title = "";
+			if (doc.getElementsByClass("titleheadname").size() > 0) {
+				title = doc.getElementsByClass("titleheadname").get(0)
+						.getElementsByTag("p").text();
+			} else if (doc.getElementsByClass("header-container").size() == 0) {
+				title = doc.getElementsByClass("header-container").get(0)
+						.getElementsByTag("h1").text();
+			}
 			String link = "";
 			String subTourImageUrl = "";
 			if (photoes != null) {
@@ -374,8 +381,8 @@ public class TourService {
 			Exception {
 		Date d = new Date();
 		System.out.println(getImpress(
-				baiduSearchUrl + java.net.URLEncoder.encode("五台山", "utf-8"),
-				"五台山"));
+				baiduSearchUrl + java.net.URLEncoder.encode("上海", "utf-8"),
+				"上海"));
 		// System.out.println(getImpress("东方明珠").getBytes().length);
 		System.out.println(new Date().getTime() - d.getTime());
 	}
