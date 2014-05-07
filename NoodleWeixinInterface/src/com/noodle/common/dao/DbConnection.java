@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -153,10 +154,13 @@ public class DbConnection {
 					String message = result.getString("MESSAGE");
 					if (StringUtils.isNotEmpty(message)) {
 						Document document = DocumentHelper.parseText(message);
-						Map<String,String> map = MessageUtils.parseXml(document);
+						Map<String, String> map = MessageUtils
+								.parseXml(document);
 						VoiceMessage voiceMessage = new VoiceMessage();
-						voiceMessage.setFromUserName(map.get(AllConstants.FROM_USER_NAME));
-						voiceMessage.setFormat(map.get(AllConstants.VOICE_FORMAT));
+						voiceMessage.setFromUserName(map
+								.get(AllConstants.FROM_USER_NAME));
+						voiceMessage.setFormat(map
+								.get(AllConstants.VOICE_FORMAT));
 						voiceMessage.setMediaId(map.get(AllConstants.MEDIA_ID));
 						Cache.tucaoCache.add(voiceMessage);
 					}
@@ -177,7 +181,8 @@ public class DbConnection {
 		return result;
 	}
 
-	public void insertToMessageTable(String type, String subType, String message) {
+	public void insertToMessageTable(String type, String subType,
+			long createTime, String message) {
 		Connection connection = null;
 		PreparedStatement statement = null;
 		try {
@@ -186,7 +191,8 @@ public class DbConnection {
 					.prepareStatement(AllConstants.INSERT_TO_WEIXIN_MESSAGE_RECORD);
 			statement.setString(1, type);
 			statement.setString(2, subType);
-			statement.setString(3, message);
+			statement.setLong(3, createTime);
+			statement.setString(4, message);
 			statement.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -200,5 +206,32 @@ public class DbConnection {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void deleteExpiredMessage(String tuCao, int day) {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		try {
+			connection = createConnection();
+			statement = connection
+					.prepareStatement(AllConstants.DELETE_EXPIRED_MESSAGE_WEIXIN_MESSAGE_RECORD);
+			statement.setLong(1, new Date().getTime()/1000 - day * 24 * 60 * 60);
+			statement.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (statement != null)
+					statement.close();
+				if (connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void main(String[] args){
+		System.out.println(new Date().getTime()/1000 - 3 * 24 * 60 * 60);
 	}
 }

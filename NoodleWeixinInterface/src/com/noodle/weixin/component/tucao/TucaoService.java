@@ -28,6 +28,7 @@ public class TucaoService {
 				System.out.println("access 接槽  menu");
 				System.out.println("Cache.tucaoCache.size() = "
 						+ Cache.tucaoCache.size());
+				Cache.checkTucaoCache();
 				if (Cache.tucaoCache.size() > 0) {
 					int i = new Random().nextInt(Cache.tucaoCache.size());
 					if ((i - 1) < 0) {
@@ -55,7 +56,7 @@ public class TucaoService {
 			vm.setMediaId(requestMap.get(AllConstants.MEDIA_ID));
 			Cache.tucaoCache.add(vm);
 			AckTask.saveMessage(AllConstants.TU_CAO, AllConstants.TU_CAO,
-					message);
+					vm.getCreateTime(), message);
 			return MessageUtils.getBackXMLTypeText(fromUser, user, "收到了您的吐槽");
 		}
 		return null;

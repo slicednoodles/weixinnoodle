@@ -2,6 +2,7 @@ package com.noodle.common.cache;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class Cache {
 	public static void getDataToCache() throws Exception {
 		DbConnection db = new DbConnection();
 		db.selectAllFromTravelRecord();
+		db.deleteExpiredMessage(AllConstants.TU_CAO, 3);
 		db.selectAllFromWeixinMessageRecord(AllConstants.TU_CAO);
 	}
 
@@ -56,5 +58,18 @@ public class Cache {
 			}
 		}
 		return null;
+	}
+
+	public static void checkTucaoCache() {
+		if (tucaoCache != null) {
+			List<VoiceMessage> list = new ArrayList<VoiceMessage>();
+			for (VoiceMessage v : tucaoCache) {
+				if ((v.getCreateTime() + 3 * 24 * 60 * 60) < new Date()
+						.getTime() / 1000) {
+					list.add(v);
+				}
+			}
+			tucaoCache = list;
+		}
 	}
 }

@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.noodle.common.cache.Cache;
 import com.noodle.common.dao.DbConnection;
-import com.noodle.common.utils.HTMLUtils;
+import com.noodle.common.utils.AllConstants;
 import com.noodle.v5.service.TourService;
 
 public class AckTask {
@@ -58,12 +58,13 @@ public class AckTask {
 	}
 
 	public static void saveMessage(final String type, final String subType,
-			final String message) {
+			final long createTime, final String message) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				DbConnection db = new DbConnection();
-				db.insertToMessageTable(type, subType, message);
+				db.insertToMessageTable(type, subType, createTime, message);
+				db.deleteExpiredMessage(AllConstants.TU_CAO, 3);
 			}
 		}, "saveMessage").start();
 	}
